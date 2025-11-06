@@ -19,7 +19,7 @@ persistence:
   dataSize: 5Gi
   addonsSize: 2Gi
   filestoreSize: 5Gi
-  nfsSize: 25Gi
+  nfsSize: 5Gi
 
   # 🔸 Si usas un PVC existente (por ejemplo restaurado), especifícalo aquí.
   # Si se deja vacío, el chart crea uno nuevo dinámicamente: <release>-data-pvc
@@ -29,9 +29,9 @@ extraAddonsPath: /mnt/extra-addons
 
 service:
   type: ClusterIP
-  port: 8080            # Cambia si tienes otro Odoo en el cluster
+  port: 8071           # Cambia si tienes otro Odoo en el cluster
 
-domain: "odoo.ipgrup.com"
+domain: "enterpriseargocd.ipgrup.com"
 
 ingress:
   enabled: true

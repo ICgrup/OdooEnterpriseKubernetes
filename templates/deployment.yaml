@@ -43,9 +43,9 @@ spec:
                    --db_password={{ .Values.postgresql.password }} \
                    --database={{ .Values.postgresql.database }} \
                    --data-dir={{ .Values.persistence.mountPath }} \
-                   --log-level=info --http-port=8070
+                   --log-level=info --http-port=8071
           ports:
-            - containerPort: 8070
+            - containerPort: 8071
           volumeMounts:
             - name: odoo-data
               mountPath: {{ .Values.persistence.mountPath }}
