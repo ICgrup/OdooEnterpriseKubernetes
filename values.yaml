@@ -1,0 +1,50 @@
+image:
+  repository: odoo
+  tag: "19"
+  pullPolicy: IfNotPresent
+
+postgresql:
+  host: "10.0.100.20"
+  port: "5432"
+  user: "root"
+  password: "VidUxZ6MEKfR04c97GcLz3P2uVS3ZNQYIqH1"
+  database: "odooenterprise"
+
+persistence:
+  enabled: true
+  existingClaim: kubernetesenterprise-data-pvc
+  mountPath: /var/lib/odoo
+
+extraAddonsPath: /mnt/extra-addons
+
+service:
+  type: ClusterIP
+  port: 8070
+
+domain: kubernetesenterprise.ipgrup.com
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: kubernetesenterprise.ipgrup.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: kubernetesenterprise-tls
+      hosts:
+        - kubernetesenterprise.ipgrup.com
+
+extraArgs:
+  - "-i"
+  - "base"
+  - "--without-demo=all"

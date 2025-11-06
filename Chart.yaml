@@ -1,0 +1,5 @@
+apiVersion: v2
+name: kubernetesenterprise
+version: 0.1.0
+description: Simple Odoo deployment (external PostgreSQL + NFS PVC)
+appVersion: "19"
