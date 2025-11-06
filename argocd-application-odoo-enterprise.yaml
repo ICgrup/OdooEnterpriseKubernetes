@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/ICgrup/OdooEnterpriseKubernetes
     targetRevision: main
-    path: ""   # el chart está en la raíz del repo
+    path: .   # el chart está en la raíz del repo
     helm:
       releaseName: enterpriseargocd
       values: |
