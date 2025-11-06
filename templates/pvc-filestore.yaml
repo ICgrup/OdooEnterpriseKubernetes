@@ -1,12 +1,14 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: kubernetesenterprise-data-pvc
-  namespace: kubernetesenterprise
+  name: {{ printf "%s-filestore-pvc" .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 5Gi
-  storageClassName: nfs-client
+      storage: {{ .Values.persistence.filestoreSize | default "5Gi" }}
+  storageClassName: {{ .Values.persistence.storageClass | default "nfs-client" }}

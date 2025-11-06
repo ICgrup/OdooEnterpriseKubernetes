@@ -1,5 +1,28 @@
 apiVersion: v2
-name: kubernetesenterprise
+name: odoo-enterprise
 version: 0.1.0
-description: Simple Odoo deployment (external PostgreSQL + NFS PVC)
+description: >
+  Generic and reusable Odoo Helm chart for Kubernetes.
+  Supports external PostgreSQL and NFS-based Persistent Volumes.
+type: application
 appVersion: "19"
+
+maintainers:
+  - name: IP Grup DevOps
+    email: devops@ipgrup.com
+
+keywords:
+  - odoo
+  - erp
+  - helm
+  - kubernetes
+  - argocd
+
+sources:
+  - https://www.odoo.com/
+  - https://gitlab.com/ipgrup/helm-odoo
+
+icon: https://www.odoo.com/web/image/website/1/logo/Odoo
+
+annotations:
+  category: ERP

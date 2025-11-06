@@ -1,18 +1,20 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kubernetesenterprise-config
-  namespace: kubernetesenterprise
+  name: {{ .Release.Name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
 data:
-  kubernetesenterprise.conf: |
+  {{ .Release.Name }}.conf: |
     [options]
     db_host = {{ .Values.postgresql.host }}
     db_port = {{ .Values.postgresql.port }}
     db_user = {{ .Values.postgresql.user }}
     db_password = {{ .Values.postgresql.password }}
     db_name = {{ .Values.postgresql.database }}
-    data_dir = /var/lib/kubernetesenterprise
+    data_dir = {{ .Values.persistence.mountPath }}
     admin_passwd = Astartes2024!
     proxy_mode = True
     list_db = False
-    logfile = /var/lib/kubernetesenterprise/kubernetesenterprise.log
+    logfile = {{ .Values.persistence.mountPath }}/{{ .Release.Name }}.log

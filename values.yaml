@@ -8,20 +8,30 @@ postgresql:
   port: "5432"
   user: "root"
   password: "VidUxZ6MEKfR04c97GcLz3P2uVS3ZNQYIqH1"
-  database: "odooenterprise"
+  database: "odoo"
 
 persistence:
   enabled: true
-  existingClaim: kubernetesenterprise-data-pvc
   mountPath: /var/lib/odoo
+  storageClass: nfs-client
+
+  # 📦 Tamaños por tipo de volumen
+  dataSize: 5Gi
+  addonsSize: 2Gi
+  filestoreSize: 5Gi
+  nfsSize: 25Gi
+
+  # 🔸 Si usas un PVC existente (por ejemplo restaurado), especifícalo aquí.
+  # Si se deja vacío, el chart crea uno nuevo dinámicamente: <release>-data-pvc
+  existingClaim: ""
 
 extraAddonsPath: /mnt/extra-addons
 
 service:
   type: ClusterIP
-  port: 8070
+  port: 8080            # Cambia si tienes otro Odoo en el cluster
 
-domain: kubernetesenterprise.ipgrup.com
+domain: "odoo.ipgrup.com"
 
 ingress:
   enabled: true
@@ -33,16 +43,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-  hosts:
-    - host: kubernetesenterprise.ipgrup.com
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: kubernetesenterprise-tls
-      hosts:
-        - kubernetesenterprise.ipgrup.com
+    certManagerIssuer: letsencrypt-prod
 
 extraArgs:
   - "-i"

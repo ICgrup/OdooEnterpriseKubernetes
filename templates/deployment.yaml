@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kubernetesenterprise
-  namespace: kubernetesenterprise
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: kubernetesenterprise
+    app: {{ .Release.Name }}
 spec:
-  replicas: 3
+  replicas: {{ .Values.replicaCount | default 3 }}
   selector:
     matchLabels:
-      app: kubernetesenterprise
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: kubernetesenterprise
+        app: {{ .Release.Name }}
     spec:
       initContainers:
         - name: init-permissions
@@ -27,7 +27,7 @@ spec:
               mountPath: {{ .Values.persistence.mountPath }}
 
       containers:
-        - name: kubernetesenterprise
+        - name: {{ .Release.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
@@ -42,7 +42,8 @@ spec:
                    --db_user={{ .Values.postgresql.user }} \
                    --db_password={{ .Values.postgresql.password }} \
                    --database={{ .Values.postgresql.database }} \
-                   --data-dir={{ .Values.persistence.mountPath }} --log-level=info --http-port=8070
+                   --data-dir={{ .Values.persistence.mountPath }} \
+                   --log-level=info --http-port=8070
           ports:
             - containerPort: 8070
           volumeMounts:
@@ -54,7 +55,7 @@ spec:
       volumes:
         - name: odoo-data
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim }}
+            claimName: {{ .Values.persistence.existingClaim | default (printf "%s-data-pvc" .Release.Name) }}
         - name: enterprise-addons
           persistentVolumeClaim:
-            claimName: kubernetesenterprise-enterprise-addons-pvc
+            claimName: {{ printf "%s-enterprise-addons-pvc" .Release.Name }}
