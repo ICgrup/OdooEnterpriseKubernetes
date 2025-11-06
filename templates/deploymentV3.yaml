@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  labels:
+    app: odoo
+spec:
+  replicas: 1  # una sola réplica para evitar problemas RWX hasta confirmar estabilidad
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      containers:
+        - name: odoo
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          # 🟢 Inicialización normal de Odoo con parámetros dinámicos desde values.yaml
+          args: {{ .Values.extraArgs }}
+
+          ports:
+            - containerPort: 8069
+
+          env:
+            - name: HOST
+              value: "{{ .Values.postgresql.host }}"
+            - name: PORT
+              value: "{{ .Values.postgresql.port }}"
+            - name: USER
+              value: "{{ .Values.postgresql.user }}"
+            - name: PASSWORD
+              value: "{{ .Values.postgresql.password }}"
+            - name: DB_NAME
+              value: "{{ .Values.postgresql.database }}"
+
+          volumeMounts:
+            # 📦 Datos generales de Odoo
+            - name: odoo-data
+              mountPath: {{ .Values.persistence.mountPath }}
+
+            # ⚡ Sesiones efímeras (reinician con el pod)
+            - name: odoo-sessions
+              mountPath: /var/lib/odoo/sessions
+
+            # 💾 Filestore persistente (NFS RWX)
+            - name: odoo-filestore
+              mountPath: /var/lib/odoo/filestore
+
+      volumes:
+        # Volumen de datos principal (usando PVC existente)
+        - name: odoo-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim }}
+
+        # Volumen temporal para sesiones
+        - name: odoo-sessions
+          emptyDir: {}
+
+        # Volumen NFS para filestore persistente
+        - name: odoo-filestore
+          persistentVolumeClaim:
+            claimName: odoo-nfs-pvc

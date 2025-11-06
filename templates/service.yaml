@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetesenterprise
+  namespace: kubernetesenterprise
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: kubernetesenterprise
+  ports:
+  - port: 8070
+    targetPort: 8070
+    protocol: TCP

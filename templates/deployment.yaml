@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetesenterprise
+  namespace: kubernetesenterprise
+  labels:
+    app: kubernetesenterprise
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kubernetesenterprise
+  template:
+    metadata:
+      labels:
+        app: kubernetesenterprise
+    spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - mkdir -p {{ .Values.persistence.mountPath }}/filestore {{ .Values.persistence.mountPath }}/sessions;
+              chmod -R 777 {{ .Values.persistence.mountPath }} || true;
+          volumeMounts:
+            - name: odoo-data
+              mountPath: {{ .Values.persistence.mountPath }}
+
+      containers:
+        - name: kubernetesenterprise
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              mkdir -p {{ .Values.persistence.mountPath }}/filestore {{ .Values.persistence.mountPath }}/sessions
+              chmod -R 777 {{ .Values.persistence.mountPath }}
+              exec odoo --addons-path=/usr/lib/python3/dist-packages/odoo/addons,{{ .Values.extraAddonsPath }} \
+                   --db_host={{ .Values.postgresql.host }} \
+                   --db_port={{ .Values.postgresql.port }} \
+                   --db_user={{ .Values.postgresql.user }} \
+                   --db_password={{ .Values.postgresql.password }} \
+                   --database={{ .Values.postgresql.database }} \
+                   --data-dir={{ .Values.persistence.mountPath }} --log-level=info --http-port=8070
+          ports:
+            - containerPort: 8070
+          volumeMounts:
+            - name: odoo-data
+              mountPath: {{ .Values.persistence.mountPath }}
+            - name: enterprise-addons
+              mountPath: {{ .Values.extraAddonsPath }}
+
+      volumes:
+        - name: odoo-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim }}
+        - name: enterprise-addons
+          persistentVolumeClaim:
+            claimName: kubernetesenterprise-enterprise-addons-pvc
