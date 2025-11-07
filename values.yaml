@@ -29,9 +29,9 @@ extraAddonsPath: /mnt/extra-addons
 
 service:
   type: ClusterIP
-  port: 8071          # Cambia si tienes otro Odoo en el cluster
+  port: 8071           # Cambia si tienes otro Odoo en el cluster
 
-domain: "odoo.cuidatassistencia.cat"
+domain: "enterpriseargocd.ipgrup.com"
 
 ingress:
   enabled: true
