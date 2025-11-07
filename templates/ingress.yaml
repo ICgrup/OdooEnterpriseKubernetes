@@ -29,4 +29,4 @@ spec:
               service:
                 name: {{ .Release.Name }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ .Values.service.port | default 8080 }}
