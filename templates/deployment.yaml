@@ -45,7 +45,7 @@ spec:
                    --data-dir={{ .Values.persistence.mountPath }} \
                    --log-level=info --http-port=8071
           ports:
-            - containerPort: 8071
+            - containerPort: 8072
           volumeMounts:
             - name: odoo-data
               mountPath: {{ .Values.persistence.mountPath }}
