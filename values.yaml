@@ -31,7 +31,7 @@ service:
   type: ClusterIP
   port: 8072           # Cambia si tienes otro Odoo en el cluster
 
-domain: "enterpriseargocd.ipgrup.com"
+domain: "odoo.cuidatassistencia.cat"
 
 ingress:
   enabled: true
