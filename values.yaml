@@ -29,7 +29,7 @@ extraAddonsPath: /mnt/extra-addons
 
 service:
   type: ClusterIP
-  port: 8072           # Cambia si tienes otro Odoo en el cluster
+  port: 8069           # Cambia si tienes otro Odoo en el cluster
 
 domain: "odoo.cuidatassistencia.cat"
 
